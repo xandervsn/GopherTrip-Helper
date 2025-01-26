@@ -1,8 +1,6 @@
 // Initialize the map and required services
 async function initMap() {
   // Create a map instance centered on a default location
-  const { Map, InfoWindow } = await google.maps.importLibrary("maps");
-  const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary( "marker", );
 
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat:44.9842678274844, lng: -93.25080283378745},
@@ -17,15 +15,15 @@ async function initMap() {
   let markers = [];
   let currentPolyline = null;
 
-  rt = new google.maps.Polyline({
+  rt6 = new google.maps.Polyline({
     path: [
     ],
     geodesic: true,
-    strokeColor: '#00FFFF',
-    strokeOpacity: 0.4,
+    strokeColor: '#FF0000',
+    strokeOpacity: 1,
     strokeWeight: 4
   });
-  rt.setMap(map);
+  rt6.setMap(map);
 
   map.addListener('click', (event) => {
       if (markers.length >= 2) {
@@ -61,7 +59,7 @@ async function initMap() {
                   str = ""
                   path.forEach((element) => str += `{lat: ${element.lat()}, lng: ${element.lng()}},\n`)
                   console.log(str)
-                  
+    
                   currentPolyline = new google.maps.Polyline({
                       path: path,
                       geodesic: true,
@@ -76,3 +74,26 @@ async function initMap() {
       }
   });
 }
+
+fetch('rt_121.txt')
+  .then(response => response.text())
+  .then(text => {
+    let myString = "";
+    myString += text; // Append text from file
+    myString = myString.replace(/(\r\n|\n|\r|,|{|}|:|n|g|a|t|l)/gm, "");
+    myString = myString.replace(/(  )/gm, " ");
+    arr = myString.split(" ");
+
+    let output = "";
+
+    for (let i = 1; i < arr.length; i++) {
+        output += "{\n";
+        output += `"lat": ` + arr[i] + ",\n";
+        i++;
+        output += `"lng": ` + arr[i] + "\n";
+        output += "},\n";
+    }
+
+    console.log(output);
+  })
+  .catch(error => console.error('Error:', error));
